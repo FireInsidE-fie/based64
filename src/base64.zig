@@ -12,7 +12,9 @@ const Base64 = struct {
         };
     }
 
-    pub fn _char_at(self: Base64, index: usize) u8 {
+    pub fn _char_at(self: Base64, index: usize) ?u8 {
+        if (index > 63 or index < 0)
+            return null;
         return self._table[index];
     }
 };
@@ -20,7 +22,13 @@ const Base64 = struct {
 test "Base64._char_at()" {
     const base64 = Base64.init();
     const char1 = base64._char_at(6);
+    const char2 = base64._char_at(63);
+    const char3 = base64._char_at(32);
+    const char4 = base64._char_at(65); // Out of bounds
 
-    std.debug.print("{c}\n", .{char1});
-    try std.testing.expect(char1 == 'G');
+    std.debug.print("{?} - {?} - {?} - {?}\n", .{char1, char2, char3, char4});
+    try std.testing.expect(char1.? == 'G');
+    try std.testing.expect(char2.? == '/');
+    try std.testing.expect(char3.? == 'g');
+    try std.testing.expect(char4 == null);
 }
