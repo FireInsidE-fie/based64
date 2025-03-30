@@ -19,6 +19,14 @@ const Base64 = struct {
             return null;
         return self._table[index];
     }
+
+    pub fn encode(self: Base64, a: std.mem.Allocator, input: []const u8) ![]const u8 {
+        return null;
+    }
+
+    pub fn decode(self: Base64, a: std.mem.Allocator, input: []const u8) ![]const u8 {
+        return null;
+    }
 };
 
 test "Base64._char_at()" {
