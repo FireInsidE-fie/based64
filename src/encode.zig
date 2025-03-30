@@ -1,7 +1,7 @@
 const std = @import("std");
 
-/// Takes in a string as input, and returns the size in base64 if that string
-/// was converted.
+/// Takes in a standard string as input, and returns the size in base64 if that
+/// string was encoded.
 fn get_encoded_length(input: []const u8) !usize {
     if (input.len == 0) {
         return (0);
