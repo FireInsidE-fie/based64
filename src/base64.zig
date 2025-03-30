@@ -1,5 +1,7 @@
 const std = @import("std");
 
+/// Struct containing all characters of base 64 and a helper method returning
+/// the index of a given character in base 64.
 const Base64 = struct {
     _table: *const [64]u8,
 
