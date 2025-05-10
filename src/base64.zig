@@ -22,6 +22,21 @@ const Base64 = struct {
         return self._table[index];
     }
 
+    pub fn _char_index(self: Base64, char: u8) u8 {
+        if (char == '=')
+            return 64;
+
+        var index: u8 = 0;
+        for (0..63) |i| {
+            if (self._char_at(i) == char) {
+                break;
+            }
+            index += 1;
+        }
+
+        return index;
+    }
+
     pub fn encode(self: Base64, a: std.mem.Allocator, input: []const u8) ![]const u8 {
         if (input.len == 0) {
             return "";
@@ -74,7 +89,33 @@ const Base64 = struct {
     }
 
     pub fn decode(self: Base64, a: std.mem.Allocator, input: []const u8) ![]const u8 {
-        return null;
+        if (input.len == 0) {
+            return "";
+        }
+        const output_size = try get_decoded_length(input);
+        var output = try a.alloc(u8, output_size);
+        var count: u8 = 0;
+        var iout: u64 = 0;
+        var buffer = [4]u8{0, 0, 0, 0};
+
+        for (0..input.len) |i| {
+            buffer[count] = self._char_index(input[i]);
+            count += 1;
+            if (count == 4) {
+                output[iout] = (buffer[0] << 2) + (buffer[1] >> 4);
+                if (buffer[2] != 64) {
+                    output[iout + 1] = (buffer[1] << 4) + (buffer[2] >> 2);
+                }
+                if (buffer[3] != 64) {
+                    output[iout + 2] = (buffer[2] << 6) + buffer[3];
+                }
+
+                iout += 3;
+                count = 0;
+            }
+        }
+        
+        return output;
     }
 };
 
